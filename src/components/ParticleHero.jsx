@@ -99,9 +99,9 @@ function ParticleHero() {
     }
 
     function createParticles() {
-      const titlePoints = createTitlePoints(width, height, isMobile ? 12 : 8);
+      const titlePoints = createTitlePoints(width, height, isMobile ? 5 : 8);
       const arrowPoints = createArrowPoints(width, height, isMobile ? 5 : 4);
-      const targetTitleCount = isMobile ? 460 : 1450;
+      const targetTitleCount = isMobile ? 1250 : 1450;
       const titleStep = Math.max(1, Math.ceil(titlePoints.length / targetTitleCount));
       const chosenTitlePoints = titlePoints.filter((_, index) => index % titleStep === 0);
       const chosenArrowPoints = arrowPoints;
@@ -128,16 +128,17 @@ function ParticleHero() {
     function makeParticle(x, y, kind) {
       const isShapeParticle = kind !== "ambient";
       const isArrowParticle = kind === "arrow";
+      const introSpread = isMobile && isShapeParticle ? 14 : 46;
 
       return {
         baseX: x,
         baseY: y,
-        x: x + (Math.random() - 0.5) * 46,
-        y: y + (Math.random() - 0.5) * 46,
+        x: x + (Math.random() - 0.5) * introSpread,
+        y: y + (Math.random() - 0.5) * introSpread,
         vx: 0,
         vy: 0,
-        size: isArrowParticle ? 1 + Math.random() * 0.85 : isShapeParticle ? 1.45 + Math.random() * 1.55 : 0.75 + Math.random() * 1.45,
-        alpha: isArrowParticle ? 0.8 + Math.random() * 0.18 : isShapeParticle ? 0.88 + Math.random() * 0.12 : 0.18 + Math.random() * 0.34,
+        size: isArrowParticle ? 1 + Math.random() * 0.85 : isShapeParticle ? (isMobile ? 1.7 + Math.random() * 1.2 : 1.45 + Math.random() * 1.55) : 0.75 + Math.random() * 1.45,
+        alpha: isArrowParticle ? 0.8 + Math.random() * 0.18 : isShapeParticle ? (isMobile ? 0.95 + Math.random() * 0.05 : 0.88 + Math.random() * 0.12) : 0.18 + Math.random() * 0.34,
         hue: Math.random() > 0.68 ? 156 : 188,
         drift: Math.random() * Math.PI * 2,
         text: isShapeParticle,
@@ -223,8 +224,8 @@ function ParticleHero() {
         const driftX = Math.cos(time * 0.001 + particle.drift) * (particle.text ? 0.05 : 0.13);
         const driftY = Math.sin(time * 0.0012 + particle.drift) * (particle.text ? 0.05 : 0.13);
 
-        particle.vx += (particle.baseX - particle.x) * (particle.text ? 0.017 : 0.006);
-        particle.vy += (particle.baseY - particle.y) * (particle.text ? 0.017 : 0.006);
+        particle.vx += (particle.baseX - particle.x) * (particle.text ? (isMobile ? 0.034 : 0.017) : 0.006);
+        particle.vy += (particle.baseY - particle.y) * (particle.text ? (isMobile ? 0.034 : 0.017) : 0.006);
         particle.vx += driftX;
         particle.vy += driftY;
 
