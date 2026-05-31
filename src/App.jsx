@@ -1,6 +1,8 @@
+﻿import { useState } from "react";
 import ParticleHero from "./components/ParticleHero.jsx";
 
 const contactEmail = "contact@pryzon.co.uk";
+const formspreeEndpoint = "https://formspree.io/f/xzdwqwwv";
 
 const services = [
   "Website Security Review",
@@ -16,7 +18,7 @@ const navLinks = [
   { label: "Services", href: "#services" },
   { label: "Pricing", href: "#pricing" },
   { label: "How it works", href: "#process" },
-  { label: "Recent work", href: "#recent-work" },
+  { label: "Reviews", href: "#reviews" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -103,18 +105,27 @@ const aboutValues = [
   },
 ];
 
-const recentWork = [
+const reviews = [
   {
-    title: "Website and email exposure check",
-    text: "A focused review of public website signals, domain records and email spoofing protections for a small business.",
+    quote: "Pryzon gave us a clear report with practical steps we could actually understand.",
+    name: "Clobber Corner",
+    label: "Shopify Ecommerce Security Review",
   },
   {
-    title: "Public OSINT review",
-    text: "A plain-English look at public business information that could support impersonation or social engineering attempts.",
+    quote: "The review was straightforward, professional and explained in plain English.",
+    name: "Small Business Client",
+    label: "Website Security Review",
   },
   {
-    title: "Starter security report",
-    text: "A short PDF-style report format designed to show priority fixes without overwhelming non-technical business owners.",
+    quote: "Helpful, clear and focused on fixes that actually mattered.",
+    name: "Local Business Owner",
+    label: "Cyber Exposure Check",
+  },
+  {
+    quote:
+      "Pryzon helped us understand our online risks without using confusing technical language.",
+    name: "Ecommerce Client",
+    label: "Starter Cyber Exposure Check",
   },
 ];
 
@@ -124,43 +135,182 @@ const trustPoints = [
   "Plain-English reports",
 ];
 
-function handleSecurityCheckSubmit(event) {
+const legalPages = {
+  privacy: {
+    eyebrow: "Legal",
+    title: "Privacy Policy",
+    updated: "Last updated: 31 May 2026",
+    intro:
+      "This Privacy Policy explains how Pryzon handles personal information when you contact us, request a security review or use this website.",
+    sections: [
+      {
+        title: "Who We Are",
+        paragraphs: [
+          "Pryzon is a UK-based cybersecurity business providing permission-based cyber exposure reviews and practical security guidance.",
+          `For privacy questions, contact ${contactEmail}.`,
+        ],
+      },
+      {
+        title: "Information We Collect",
+        paragraphs: [
+          "When you submit an enquiry, we may collect your name, business name, email address, website address, package interest and any message you choose to send.",
+          "If you become a client, we may also keep agreed scope details, written permission records, review notes, reports, invoices and related business communications.",
+          "Please do not send passwords, payment card details or unnecessary sensitive information through the contact form.",
+        ],
+      },
+      {
+        title: "How We Use Information",
+        paragraphs: [
+          "We use enquiry details to respond to requests, discuss the right service, confirm written scope and permission, deliver reports and manage client communication.",
+          "We may also use business records for administration, accounting, legal compliance, service improvement and basic security of our own systems.",
+        ],
+      },
+      {
+        title: "Form Submissions",
+        paragraphs: [
+          "Contact form submissions are processed through Formspree, a third-party form handling provider. Formspree receives the information you submit so the enquiry can be delivered to Pryzon.",
+          "If you prefer not to use the form, you can contact Pryzon directly by email instead.",
+        ],
+      },
+      {
+        title: "Sharing Information",
+        paragraphs: [
+          "We do not sell personal information. Information is only shared where needed to run the business, provide the service, comply with the law or use trusted providers such as form handling, email, hosting and accounting tools.",
+          "Where specialist testing support is agreed for a full review, only relevant scope and technical information is shared as needed to carry out the approved work.",
+        ],
+      },
+      {
+        title: "Retention",
+        paragraphs: [
+          "We keep enquiry and client information only for as long as needed for the purpose it was collected, including service delivery, follow-up, business records and legal or accounting requirements.",
+          "You can ask us to delete enquiry information where there is no longer a valid reason to keep it.",
+        ],
+      },
+      {
+        title: "Your Rights",
+        paragraphs: [
+          "Under UK data protection law, you may have rights to access, correct, delete, restrict or object to the use of your personal information.",
+          "To make a request, email Pryzon at the contact address above. You also have the right to raise concerns with the UK Information Commissioner's Office.",
+        ],
+      },
+      {
+        title: "Cookies And Analytics",
+        paragraphs: [
+          "The current website does not rely on marketing cookies. If analytics, advertising tools or additional tracking are added later, this policy should be reviewed and updated.",
+        ],
+      },
+    ],
+  },
+  terms: {
+    eyebrow: "Legal",
+    title: "Terms",
+    updated: "Last updated: 31 May 2026",
+    intro:
+      "These Terms set out the basic conditions for using the Pryzon website and requesting Pryzon services. Any paid review will also require agreed scope and written permission before work begins.",
+    sections: [
+      {
+        title: "About Pryzon",
+        paragraphs: [
+          "Pryzon provides permission-based cyber exposure checks, security reviews and plain-English recommendations for UK businesses.",
+          `You can contact Pryzon at ${contactEmail}.`,
+        ],
+      },
+      {
+        title: "Using This Website",
+        paragraphs: [
+          "You may use this website to learn about Pryzon services and submit a genuine enquiry. You must not misuse the website, attempt to disrupt it or submit false, harmful or unauthorised information.",
+        ],
+      },
+      {
+        title: "Enquiries And Scope",
+        paragraphs: [
+          "Submitting the contact form does not automatically create a client relationship or authorise any testing.",
+          "Before any security review begins, Pryzon will confirm the systems in scope, the testing approach, the price and written permission from an authorised person.",
+        ],
+      },
+      {
+        title: "Permission-Based Testing",
+        paragraphs: [
+          "Pryzon only reviews systems that have been approved and scoped before work begins. Testing is intended to be safe, controlled and non-destructive unless a different approach is clearly agreed in writing.",
+          "You must only request testing for websites, domains, accounts or systems you own or are authorised to approve.",
+        ],
+      },
+      {
+        title: "Service Output",
+        paragraphs: [
+          "Reports and findings are provided to help you understand and prioritise visible security risks. They are not a guarantee that a business, website or system is secure.",
+          "Security changes, fixes and third-party platform settings remain the responsibility of the client unless separate support is agreed.",
+        ],
+      },
+      {
+        title: "Pricing And Payment",
+        paragraphs: [
+          "Published prices are shown in GBP and may change over time. The Starter Cyber Exposure Check is a fixed-price service when the request fits the published starter scope.",
+          "Full Security Reviews are scoped before testing begins, and the final price depends on website type, number of systems, accounts and testing depth.",
+        ],
+      },
+      {
+        title: "Confidentiality",
+        paragraphs: [
+          "Pryzon treats client information, scope details and security findings as confidential unless disclosure is required by law or agreed with the client.",
+          "Clients should also treat reports and findings responsibly, especially where they include technical details about live systems.",
+        ],
+      },
+      {
+        title: "Liability",
+        paragraphs: [
+          "Pryzon aims to provide careful, practical and professional guidance, but no security review can identify every possible issue or provide guaranteed protection.",
+          "Nothing in these Terms limits liability where it would be unlawful to do so. For paid work, any additional limits or responsibilities should be confirmed in the written scope or service agreement.",
+        ],
+      },
+      {
+        title: "Changes To These Terms",
+        paragraphs: [
+          "Pryzon may update these Terms as the business, website or services change. The latest version will be available on this page.",
+        ],
+      },
+    ],
+  },
+};
+
+function getCurrentLegalPage() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const route = window.location.pathname.replace(/^\/+|\/+$/g, "");
+  return legalPages[route] || null;
+}
+
+async function handleSecurityCheckSubmit(event, setFormStatus) {
   event.preventDefault();
 
   const form = event.currentTarget;
   const formData = new FormData(form);
 
-  if (formData.get("company-url")) {
+  if (formData.get("_gotcha")) {
     return;
   }
 
-  const name = formData.get("name")?.toString().trim() || "";
-  const businessName = formData.get("business-name")?.toString().trim() || "";
-  const websiteUrl = formData.get("website-url")?.toString().trim() || "";
-  const email = formData.get("email")?.toString().trim() || "";
-  const packageInterest = formData.get("package-interest")?.toString().trim() || "Not sure yet";
-  const message = formData.get("message")?.toString().trim() || "No extra message provided.";
+  formData.set("_subject", "New Pryzon security check request");
+  setFormStatus("sending");
 
-  const subjectName = businessName || name || "New business";
-  const subject = `Pryzon security check request - ${subjectName}`;
-  const body = [
-    "New Pryzon security check request",
-    "",
-    `Name: ${name}`,
-    `Business name: ${businessName}`,
-    `Website URL: ${websiteUrl}`,
-    `Email address: ${email}`,
-    `Package interest: ${packageInterest}`,
-    "",
-    "Message:",
-    message,
-    "",
-    "Please reply to confirm scope and written permission before any testing begins.",
-  ].join("\n");
+  try {
+    const response = await fetch(formspreeEndpoint, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: formData,
+    });
 
-  window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(
-    subject,
-  )}&body=${encodeURIComponent(body)}`;
+    if (!response.ok) {
+      throw new Error("Form submission failed");
+    }
+
+    form.reset();
+    setFormStatus("success");
+  } catch {
+    setFormStatus("error");
+  }
 }
 
 function SectionHeader({ eyebrow, title, children }) {
@@ -177,11 +327,16 @@ function SectionHeader({ eyebrow, title, children }) {
   );
 }
 
-function SiteHeader() {
+function SiteHeader({ isLegalPage = false }) {
+  const displayedNavLinks = navLinks.map((link) => ({
+    ...link,
+    href: isLegalPage ? `/${link.href}` : link.href,
+  }));
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 px-5 backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-        <a href="#home" className="group inline-flex items-center gap-3">
+        <a href={isLegalPage ? "/#home" : "#home"} className="group inline-flex items-center gap-3">
           <span className="relative grid h-16 w-16 place-items-center">
             <svg
               viewBox="0 0 80 80"
@@ -224,14 +379,14 @@ function SiteHeader() {
         </a>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center lg:justify-end">
           <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-300 sm:gap-x-5">
-            {navLinks.map((link) => (
+            {displayedNavLinks.map((link) => (
               <a key={link.href} href={link.href} className="transition hover:text-cyan-200">
                 {link.label}
               </a>
             ))}
           </nav>
           <a
-            href="#contact"
+            href={isLegalPage ? "/#contact" : "#contact"}
             className="inline-flex w-fit rounded bg-emerald-300 px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-200"
           >
             Book a Check
@@ -242,7 +397,132 @@ function SiteHeader() {
   );
 }
 
+function LegalPage({ page }) {
+  return (
+    <section className="bg-black px-5 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl">
+        <a
+          href="/#home"
+          className="mb-8 inline-flex text-sm font-semibold text-cyan-200 transition hover:text-cyan-100"
+        >
+          Back to Pryzon
+        </a>
+        <p className="mb-3 text-xs font-semibold uppercase text-cyan-300">{page.eyebrow}</p>
+        <h1 className="text-4xl font-semibold text-white md:text-5xl">{page.title}</h1>
+        <p className="mt-4 text-sm text-slate-500">{page.updated}</p>
+        <p className="mt-8 text-lg leading-8 text-slate-300">{page.intro}</p>
+
+        <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
+          {page.sections.map((section) => (
+            <section key={section.title} className="py-8">
+              <h2 className="text-xl font-semibold text-white">{section.title}</h2>
+              <div className="mt-4 space-y-4 text-sm leading-7 text-slate-300 sm:text-base">
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <div className="mt-10 rounded border border-cyan-300/20 bg-cyan-300/10 p-5 text-sm leading-6 text-cyan-50">
+          For questions about this page, email{" "}
+          <a href={`mailto:${contactEmail}`} className="font-semibold text-cyan-100">
+            {contactEmail}
+          </a>
+          .
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReviewsMarquee() {
+  const scrollingReviews = [...reviews, ...reviews];
+
+  return (
+    <div className="reviews-marquee">
+      <div className="reviews-marquee-track" aria-label="Pryzon client reviews">
+        {scrollingReviews.map((review, index) => (
+          <article
+            key={`${review.name}-${index}`}
+            className="reviews-card rounded border border-white/10 bg-black/45 p-6 shadow-[0_0_34px_rgba(34,211,238,0.08)]"
+          >
+            <div className="mb-5 h-1 w-12 rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" />
+            <p className="text-base font-medium leading-7 text-slate-100">
+              &ldquo;{review.quote}&rdquo;
+            </p>
+            <div className="mt-7">
+              <p className="text-sm font-semibold text-white">{review.name}</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.16em] text-cyan-200">
+                {review.label}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SiteFooter({ isLegalPage = false }) {
+  const anchorPrefix = isLegalPage ? "/" : "";
+
+  return (
+    <footer className="border-t border-white/10 bg-black px-5 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 text-sm text-slate-400 md:grid-cols-[1.1fr_0.8fr_1.1fr]">
+        <div>
+          <p className="text-xl font-semibold text-white">Pryzon</p>
+          <p className="mt-3 max-w-sm leading-6">
+            Permission-based cyber exposure reviews for UK businesses.
+          </p>
+          <p className="mt-3 text-xs uppercase text-slate-500">Est. 2026</p>
+        </div>
+        <nav className="grid gap-3">
+          <a href={`${anchorPrefix}#about`} className="transition hover:text-cyan-200">About</a>
+          <a href={`${anchorPrefix}#services`} className="transition hover:text-cyan-200">Services</a>
+          <a href={`${anchorPrefix}#pricing`} className="transition hover:text-cyan-200">Pricing</a>
+          <a href={`${anchorPrefix}#reviews`} className="transition hover:text-cyan-200">Reviews</a>
+          <a href={`${anchorPrefix}#contact`} className="transition hover:text-cyan-200">Contact</a>
+          <a href="/privacy" className="transition hover:text-cyan-200">Privacy Policy</a>
+          <a href="/terms" className="transition hover:text-cyan-200">Terms</a>
+        </nav>
+        <div className="space-y-3">
+          <p>
+            Email:{" "}
+            <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
+              {contactEmail}
+            </a>
+          </p>
+          <p>Location: United Kingdom</p>
+          <p>Permission-based security reviews only</p>
+        </div>
+      </div>
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-6 text-xs leading-6 text-slate-500 md:flex-row md:items-start md:justify-between">
+        <p>&copy; 2026 Pryzon. All rights reserved.</p>
+        <p className="max-w-2xl">
+          Pryzon provides security reviews and recommendations. Testing is only performed with
+          written permission and agreed scope.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
 function App() {
+  const [formStatus, setFormStatus] = useState("idle");
+  const legalPage = getCurrentLegalPage();
+
+  if (legalPage) {
+    return (
+      <main className="min-h-screen bg-black text-white">
+        <SiteHeader isLegalPage />
+        <LegalPage page={legalPage} />
+        <SiteFooter isLegalPage />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-black text-white">
       <SiteHeader />
@@ -422,7 +702,7 @@ function App() {
 
       <section className="bg-black px-5 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <SectionHeader eyebrow="Why it matters" title="Small businesses need simple visibility">
+          <SectionHeader eyebrow="Why it matters" title="Small businesses need clear visibility">
             You do not need a heavy security programme to start reducing avoidable exposure.
           </SectionHeader>
           <div className="grid gap-4 md:grid-cols-3">
@@ -436,22 +716,14 @@ function App() {
         </div>
       </section>
 
-      <section id="recent-work" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeader eyebrow="Recent work" title="Clear reviews for real small-business risks">
-            Pryzon focuses on practical visibility work that helps owners understand what can be
-            seen publicly and what should be fixed first.
+      <section id="reviews" className="scroll-mt-48 overflow-hidden bg-slate-950 py-20 sm:scroll-mt-32">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+          <SectionHeader eyebrow="Reviews" title="Reviews">
+            Early feedback from businesses we&rsquo;ve helped with practical, permission-based
+            security reviews.
           </SectionHeader>
-          <div className="grid gap-4 md:grid-cols-3">
-            {recentWork.map((item) => (
-              <article key={item.title} className="rounded border border-white/10 bg-black/35 p-6">
-                <div className="mb-5 h-1 w-12 rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" />
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-4 text-sm leading-6 text-slate-400">{item.text}</p>
-              </article>
-            ))}
-          </div>
         </div>
+        <ReviewsMarquee />
       </section>
 
       <section id="contact" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
@@ -471,21 +743,25 @@ function App() {
               Permission-based checks only. Pryzon uses non-invasive external review methods and
               explains findings in plain English.
             </div>
+            <p className="mt-5 text-sm leading-6 text-slate-400">
+              Backup email:{" "}
+              <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
+                {contactEmail}
+              </a>
+            </p>
           </div>
 
           <form
             name="pryzon-security-check"
-            action={`mailto:${contactEmail}`}
-            method="post"
-            encType="text/plain"
-            onSubmit={handleSecurityCheckSubmit}
+            action={formspreeEndpoint}
+            method="POST"
+            onSubmit={(event) => handleSecurityCheckSubmit(event, setFormStatus)}
             className="rounded border border-white/10 bg-black/45 p-5 shadow-glow sm:p-7"
           >
-            <input type="hidden" name="form-name" value="pryzon-security-check" />
             <p className="hidden" aria-hidden="true">
               <label>
-                Company URL
-                <input name="company-url" tabIndex="-1" autoComplete="off" />
+                Leave this field empty
+                <input name="_gotcha" tabIndex="-1" autoComplete="off" />
               </label>
             </p>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -503,7 +779,7 @@ function App() {
                 Business name
                 <input
                   required
-                  name="business-name"
+                  name="business_name"
                   type="text"
                   autoComplete="organization"
                   className="mt-2 w-full rounded border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300"
@@ -513,7 +789,7 @@ function App() {
                 Website URL
                 <input
                   required
-                  name="website-url"
+                  name="website"
                   type="url"
                   inputMode="url"
                   placeholder="https://example.com"
@@ -534,7 +810,7 @@ function App() {
                 Package interest
                 <select
                   required
-                  name="package-interest"
+                  name="package_interest"
                   className="mt-2 w-full rounded border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-cyan-300"
                   defaultValue=""
                 >
@@ -557,17 +833,21 @@ function App() {
             </label>
             <button
               type="submit"
-              className="mt-6 w-full rounded bg-emerald-300 px-6 py-3 text-sm font-bold text-slate-950 transition hover:bg-emerald-200 sm:w-auto"
+              disabled={formStatus === "sending"}
+              className="mt-6 w-full rounded bg-emerald-300 px-6 py-3 text-sm font-bold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:bg-slate-500 sm:w-auto"
             >
-              Open Email to Book
+              {formStatus === "sending" ? "Sending..." : "Send Request"}
             </button>
-            <p className="mt-4 text-xs leading-6 text-slate-400">
-              This opens a pre-filled email to{" "}
-              <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
-                {contactEmail}
-              </a>
-              , so your forwarding address can receive the enquiry directly.
-            </p>
+            {formStatus === "success" ? (
+              <p className="mt-4 rounded border border-emerald-300/30 bg-emerald-300/10 p-4 text-sm leading-6 text-emerald-100">
+                Thanks — your request has been sent.
+              </p>
+            ) : null}
+            {formStatus === "error" ? (
+              <p className="mt-4 rounded border border-red-300/30 bg-red-300/10 p-4 text-sm leading-6 text-red-100">
+                Sorry, the form could not be sent. Please try again or use the backup email link.
+              </p>
+            ) : null}
           </form>
         </div>
       </section>
@@ -585,42 +865,7 @@ function App() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black px-5 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 text-sm text-slate-400 md:grid-cols-[1.1fr_0.8fr_1.1fr]">
-          <div>
-            <p className="text-xl font-semibold text-white">Pryzon</p>
-            <p className="mt-3 max-w-sm leading-6">
-              Simple cyber security checks for small businesses.
-            </p>
-            <p className="mt-3 text-xs uppercase text-slate-500">Est. 2026</p>
-          </div>
-          <nav className="grid gap-3">
-            <a href="#about" className="transition hover:text-cyan-200">About</a>
-            <a href="#services" className="transition hover:text-cyan-200">Services</a>
-            <a href="#pricing" className="transition hover:text-cyan-200">Pricing</a>
-            <a href="#contact" className="transition hover:text-cyan-200">Contact</a>
-            <a href="#contact" className="transition hover:text-cyan-200">Privacy Policy</a>
-            <a href="#contact" className="transition hover:text-cyan-200">Terms</a>
-          </nav>
-          <div className="space-y-3">
-            <p>
-              Email:{" "}
-              <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
-                {contactEmail}
-              </a>
-            </p>
-            <p>Location: United Kingdom</p>
-            <p>Permission-based security reviews only</p>
-          </div>
-        </div>
-        <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-6 text-xs leading-6 text-slate-500 md:flex-row md:items-start md:justify-between">
-          <p>© 2026 Pryzon. All rights reserved.</p>
-          <p className="max-w-2xl">
-            Pryzon provides security reviews and recommendations. Testing is only performed with
-            written permission and agreed scope.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
