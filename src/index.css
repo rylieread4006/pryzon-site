@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #000;
+}
+
+section {
+  scroll-margin-top: 132px;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.particle-hero {
+  min-height: clamp(520px, 82vh, 900px);
+}
+
+.particle-arrow-hitbox {
+  cursor: s-resize;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  section {
+    scroll-margin-top: 84px;
+  }
+}
