@@ -1,5 +1,7 @@
 import ParticleHero from "./components/ParticleHero.jsx";
 
+const contactEmail = "contact@pryzon.co.uk";
+
 const services = [
   "Website Security Review",
   "Email Spoofing / DMARC Check",
@@ -10,6 +12,7 @@ const services = [
 ];
 
 const navLinks = [
+  { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
   { label: "Pricing", href: "#pricing" },
   { label: "How it works", href: "#process" },
@@ -85,6 +88,21 @@ const reasons = [
   },
 ];
 
+const aboutValues = [
+  {
+    title: "Permission-first testing",
+    text: "We only review systems that have been clearly approved and scoped before work begins.",
+  },
+  {
+    title: "Plain-English reporting",
+    text: "Clients receive clear findings, business impact and ranked fixes without unnecessary jargon.",
+  },
+  {
+    title: "Built for small businesses",
+    text: "Our services are designed for small businesses that need practical security guidance without enterprise-level complexity.",
+  },
+];
+
 const recentWork = [
   {
     title: "Website and email exposure check",
@@ -105,6 +123,45 @@ const trustPoints = [
   "Non-destructive testing",
   "Plain-English reports",
 ];
+
+function handleSecurityCheckSubmit(event) {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+
+  if (formData.get("company-url")) {
+    return;
+  }
+
+  const name = formData.get("name")?.toString().trim() || "";
+  const businessName = formData.get("business-name")?.toString().trim() || "";
+  const websiteUrl = formData.get("website-url")?.toString().trim() || "";
+  const email = formData.get("email")?.toString().trim() || "";
+  const packageInterest = formData.get("package-interest")?.toString().trim() || "Not sure yet";
+  const message = formData.get("message")?.toString().trim() || "No extra message provided.";
+
+  const subjectName = businessName || name || "New business";
+  const subject = `Pryzon security check request - ${subjectName}`;
+  const body = [
+    "New Pryzon security check request",
+    "",
+    `Name: ${name}`,
+    `Business name: ${businessName}`,
+    `Website URL: ${websiteUrl}`,
+    `Email address: ${email}`,
+    `Package interest: ${packageInterest}`,
+    "",
+    "Message:",
+    message,
+    "",
+    "Please reply to confirm scope and written permission before any testing begins.",
+  ].join("\n");
+
+  window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
+}
 
 function SectionHeader({ eyebrow, title, children }) {
   return (
@@ -191,7 +248,55 @@ function App() {
       <SiteHeader />
       <ParticleHero />
 
-      <section id="services" className="bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
+      <section id="about" className="scroll-mt-48 bg-black px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <div>
+            <p className="mb-3 text-xs font-semibold uppercase text-cyan-300">
+              About
+            </p>
+            <h2 className="text-3xl font-semibold text-white md:text-4xl">
+              About Pryzon
+            </h2>
+            <div className="mt-6 space-y-5 text-base leading-7 text-slate-300">
+              <p>
+                Pryzon is a new UK-based cybersecurity business helping small businesses
+                understand and reduce their online security risks.
+              </p>
+              <p>
+                We specialise in clear, practical security reviews for small businesses that rely
+                on websites, email, ecommerce platforms and online customer trust. Our work focuses
+                on identifying real exposure, explaining the risk in plain English, and giving
+                business owners a ranked list of fixes they can actually understand and act on.
+              </p>
+              <p>
+                As a newer business, we are building our reputation through careful,
+                permission-based reviews and strong client results. Our early reviews have helped
+                clients identify practical improvements around website exposure, email spoofing
+                protection, ecommerce fraud risks and admin security.
+              </p>
+              <p>
+                We are local, approachable and straightforward. We do not use scare tactics or
+                confusing technical language. Every review is carried out with agreed scope,
+                written permission and a focus on safe, non-destructive testing.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4">
+            {aboutValues.map((value) => (
+              <article
+                key={value.title}
+                className="rounded border border-white/10 bg-slate-950 p-6 transition hover:border-cyan-300/35 hover:bg-white/[0.04]"
+              >
+                <div className="mb-5 h-1 w-12 rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" />
+                <h3 className="text-lg font-semibold text-white">{value.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{value.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="services" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             eyebrow="Services"
@@ -218,7 +323,7 @@ function App() {
         </div>
       </section>
 
-      <section id="process" className="bg-black px-5 py-20 sm:px-6 lg:px-8">
+      <section id="process" className="scroll-mt-48 bg-black px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader eyebrow="How it works" title="A clear process from permission to report">
             Every check starts with consent and a defined scope, so your business knows exactly
@@ -237,7 +342,7 @@ function App() {
         </div>
       </section>
 
-      <section id="pricing" className="bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
+      <section id="pricing" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader eyebrow="Paid options" title="Choose the right level of review">
             Start with a focused exposure check, or choose a deeper review when your business
@@ -331,7 +436,7 @@ function App() {
         </div>
       </section>
 
-      <section id="recent-work" className="bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
+      <section id="recent-work" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader eyebrow="Recent work" title="Clear reviews for real small-business risks">
             Pryzon focuses on practical visibility work that helps owners understand what can be
@@ -349,7 +454,7 @@ function App() {
         </div>
       </section>
 
-      <section id="contact" className="bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
+      <section id="contact" className="scroll-mt-48 bg-slate-950 px-5 py-20 sm:scroll-mt-32 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div>
             <p className="mb-3 text-xs font-semibold uppercase text-emerald-300">
@@ -370,16 +475,17 @@ function App() {
 
           <form
             name="pryzon-security-check"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="company-url"
+            action={`mailto:${contactEmail}`}
+            method="post"
+            encType="text/plain"
+            onSubmit={handleSecurityCheckSubmit}
             className="rounded border border-white/10 bg-black/45 p-5 shadow-glow sm:p-7"
           >
             <input type="hidden" name="form-name" value="pryzon-security-check" />
-            <p className="hidden">
+            <p className="hidden" aria-hidden="true">
               <label>
                 Company URL
-                <input name="company-url" />
+                <input name="company-url" tabIndex="-1" autoComplete="off" />
               </label>
             </p>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -427,6 +533,7 @@ function App() {
               <label className="text-sm font-medium text-slate-200">
                 Package interest
                 <select
+                  required
                   name="package-interest"
                   className="mt-2 w-full rounded border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-cyan-300"
                   defaultValue=""
@@ -452,8 +559,15 @@ function App() {
               type="submit"
               className="mt-6 w-full rounded bg-emerald-300 px-6 py-3 text-sm font-bold text-slate-950 transition hover:bg-emerald-200 sm:w-auto"
             >
-              Request a Security Check
+              Open Email to Book
             </button>
+            <p className="mt-4 text-xs leading-6 text-slate-400">
+              This opens a pre-filled email to{" "}
+              <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
+                {contactEmail}
+              </a>
+              , so your forwarding address can receive the enquiry directly.
+            </p>
           </form>
         </div>
       </section>
@@ -481,6 +595,7 @@ function App() {
             <p className="mt-3 text-xs uppercase text-slate-500">Est. 2026</p>
           </div>
           <nav className="grid gap-3">
+            <a href="#about" className="transition hover:text-cyan-200">About</a>
             <a href="#services" className="transition hover:text-cyan-200">Services</a>
             <a href="#pricing" className="transition hover:text-cyan-200">Pricing</a>
             <a href="#contact" className="transition hover:text-cyan-200">Contact</a>
@@ -490,8 +605,8 @@ function App() {
           <div className="space-y-3">
             <p>
               Email:{" "}
-              <a href="mailto:contact@pryzon.co.uk" className="text-cyan-200 hover:text-cyan-100">
-                contact@pryzon.co.uk
+              <a href={`mailto:${contactEmail}`} className="text-cyan-200 hover:text-cyan-100">
+                {contactEmail}
               </a>
             </p>
             <p>Location: United Kingdom</p>
