@@ -68,8 +68,11 @@ textarea {
 
 .reviews-card {
   width: var(--review-card-width);
-  min-height: 260px;
+  min-height: 420px;
   flex: 0 0 var(--review-card-width);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   transition:
     border-color 180ms ease,
     background-color 180ms ease,
@@ -117,6 +120,10 @@ textarea {
 
   .reviews-marquee-track {
     animation-duration: 44s;
+  }
+
+  .reviews-card {
+    min-height: 520px;
   }
 }
 

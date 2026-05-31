@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import ParticleHero from "./components/ParticleHero.jsx";
+import clobberCornerLogo from "./assets/clobber-corner-logo.png";
 
 const contactEmail = "contact@pryzon.co.uk";
 const formspreeEndpoint = "https://formspree.io/f/xzdwqwwv";
@@ -107,9 +108,12 @@ const aboutValues = [
 
 const reviews = [
   {
-    quote: "Pryzon gave us a clear report with practical steps we could actually understand.",
+    quote:
+      "I recently had Pryzon conduct a cybersecurity review for my small online clothing shop, and I couldn’t be happier with the experience. From start to finish, their team was thorough, professional, and incredibly knowledgeable. They not only identified potential vulnerabilities but also provided clear, actionable recommendations that were easy to implement.",
     name: "Clobber Corner",
     label: "Shopify Ecommerce Security Review",
+    logo: clobberCornerLogo,
+    url: "https://clobbercorner.com/",
   },
   {
     quote: "The review was straightforward, professional and explained in plain English.",
@@ -444,25 +448,67 @@ function ReviewsMarquee() {
     <div className="reviews-marquee">
       <div className="reviews-marquee-track" aria-label="Pryzon client reviews">
         {scrollingReviews.map((review, index) => (
-          <article
-            key={`${review.name}-${index}`}
-            className="reviews-card rounded border border-white/10 bg-black/45 p-6 shadow-[0_0_34px_rgba(34,211,238,0.08)]"
-          >
-            <div className="mb-5 h-1 w-12 rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" />
-            <p className="text-base font-medium leading-7 text-slate-100">
-              &ldquo;{review.quote}&rdquo;
-            </p>
-            <div className="mt-7">
-              <p className="text-sm font-semibold text-white">{review.name}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.16em] text-cyan-200">
-                {review.label}
-              </p>
-            </div>
-          </article>
+          <ReviewCard review={review} index={index} key={`${review.name}-${index}`} />
         ))}
       </div>
     </div>
   );
+}
+
+function ReviewCard({ review, index }) {
+  const cardContent = (
+    <>
+      <div>
+        {review.logo ? (
+          <div className="mb-5 flex items-center gap-3 rounded border border-white/10 bg-white/[0.035] p-3">
+            <img
+              src={review.logo}
+              alt={`${review.name} logo`}
+              className="h-14 w-14 shrink-0 rounded bg-white object-contain"
+            />
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-violet-200">
+              {review.name}
+            </span>
+          </div>
+        ) : (
+          <div className="mb-5 h-1 w-12 rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300" />
+        )}
+        <p className="text-base font-medium leading-7 text-slate-100">
+          &ldquo;{review.quote}&rdquo;
+        </p>
+      </div>
+      <div className="mt-7">
+        <p className="text-sm font-semibold text-white">{review.name}</p>
+        <p className="mt-1 text-xs uppercase tracking-[0.16em] text-cyan-200">
+          {review.label}
+        </p>
+        {review.url ? (
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+            Visit website
+          </p>
+        ) : null}
+      </div>
+    </>
+  );
+
+  const className =
+    "reviews-card rounded border border-white/10 bg-black/45 p-6 shadow-[0_0_34px_rgba(34,211,238,0.08)]";
+
+  if (review.url) {
+    return (
+      <a
+        href={review.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`Visit ${review.name} website`}
+        className={`${className} cursor-pointer`}
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return <article className={className}>{cardContent}</article>;
 }
 
 function SiteFooter({ isLegalPage = false }) {
