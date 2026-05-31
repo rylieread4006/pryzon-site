@@ -22,6 +22,8 @@ function ParticleHero() {
     let height = 0;
     let pixelRatio = 1;
     let isMobile = window.matchMedia("(max-width: 768px)").matches;
+    let animationRunning = false;
+    let lastFrameTime = 0;
 
     function sampleShapePoints(offscreen, offsetX, offsetY, sampleGap, kind) {
       const offscreenContext = offscreen.getContext("2d", { willReadFrequently: true });
@@ -128,7 +130,7 @@ function ParticleHero() {
     function makeParticle(x, y, kind) {
       const isShapeParticle = kind !== "ambient";
       const isArrowParticle = kind === "arrow";
-      const introSpread = isMobile && isShapeParticle ? 14 : 46;
+      const introSpread = isMobile && isShapeParticle ? 0 : 46;
 
       return {
         baseX: x,
@@ -147,10 +149,18 @@ function ParticleHero() {
 
     function resize() {
       const bounds = section.getBoundingClientRect();
-      width = Math.max(320, Math.floor(bounds.width));
-      height = Math.max(420, Math.floor(bounds.height));
+      const nextWidth = Math.max(320, Math.floor(bounds.width));
+      const nextHeight = Math.max(420, Math.floor(bounds.height));
+      const nextIsMobile = window.matchMedia("(max-width: 768px)").matches;
+
+      if (nextIsMobile && isMobile && width === nextWidth && height > 0) {
+        return;
+      }
+
+      width = nextWidth;
+      height = nextHeight;
       pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-      isMobile = window.matchMedia("(max-width: 768px)").matches;
+      isMobile = nextIsMobile;
 
       canvas.width = Math.floor(width * pixelRatio);
       canvas.height = Math.floor(height * pixelRatio);
@@ -158,6 +168,14 @@ function ParticleHero() {
       canvas.style.height = `${height}px`;
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       createParticles();
+
+      if (isMobile) {
+        pointer.active = false;
+        drawBackground(0);
+        updateAndDrawParticles(0);
+      }
+
+      startAnimation();
     }
 
     function drawBackground(time) {
@@ -221,8 +239,10 @@ function ParticleHero() {
       context.globalCompositeOperation = "screen";
 
       for (const particle of particles) {
-        const driftX = Math.cos(time * 0.001 + particle.drift) * (particle.text ? 0.05 : 0.13);
-        const driftY = Math.sin(time * 0.0012 + particle.drift) * (particle.text ? 0.05 : 0.13);
+        const titleDrift = isMobile ? 0.018 : 0.05;
+        const ambientDrift = isMobile ? 0.045 : 0.13;
+        const driftX = Math.cos(time * 0.001 + particle.drift) * (particle.text ? titleDrift : ambientDrift);
+        const driftY = Math.sin(time * 0.0012 + particle.drift) * (particle.text ? titleDrift : ambientDrift);
 
         particle.vx += (particle.baseX - particle.x) * (particle.text ? (isMobile ? 0.034 : 0.017) : 0.006);
         particle.vy += (particle.baseY - particle.y) * (particle.text ? (isMobile ? 0.034 : 0.017) : 0.006);
@@ -279,16 +299,42 @@ function ParticleHero() {
     }
 
     function animate(time) {
+      if (isMobile && lastFrameTime && time - lastFrameTime < 42) {
+        animationFrame = window.requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrameTime = time;
       drawBackground(time);
       drawPointerGlow();
       updateAndDrawParticles(time);
-      drawParticleNetwork();
+      if (!isMobile) drawParticleNetwork();
       animationFrame = window.requestAnimationFrame(animate);
     }
 
+    function startAnimation() {
+      if (animationRunning) return;
+      animationRunning = true;
+      lastFrameTime = 0;
+      animationFrame = window.requestAnimationFrame(animate);
+    }
+
+    function stopAnimation() {
+      if (!animationRunning) return;
+      window.cancelAnimationFrame(animationFrame);
+      animationRunning = false;
+      animationFrame = 0;
+      lastFrameTime = 0;
+    }
+
     function handlePointerMove(event) {
+      if (isMobile) {
+        pointer.active = false;
+        return;
+      }
+
       const bounds = section.getBoundingClientRect();
-      pointer.active = !isMobile;
+      pointer.active = true;
       pointer.x = event.clientX - bounds.left;
       pointer.y = event.clientY - bounds.top;
     }
@@ -304,10 +350,9 @@ function ParticleHero() {
     section.addEventListener("pointerleave", handlePointerLeave);
 
     resize();
-    animationFrame = window.requestAnimationFrame(animate);
 
     return () => {
-      window.cancelAnimationFrame(animationFrame);
+      stopAnimation();
       resizeObserver.disconnect();
       window.removeEventListener("resize", resize);
       section.removeEventListener("pointermove", handlePointerMove);
