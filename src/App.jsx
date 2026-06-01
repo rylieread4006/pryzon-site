@@ -1,6 +1,8 @@
 ﻿import { useState } from "react";
 import ParticleHero from "./components/ParticleHero.jsx";
+import artsEducationLogo from "./assets/arts-education-logo.avif";
 import clobberCornerLogo from "./assets/clobber-corner-logo.png";
+import swiftsValetsLogo from "./assets/swifts-valets-logo.svg";
 
 const contactEmail = "contact@pryzon.co.uk";
 const formspreeEndpoint = "https://formspree.io/f/xzdwqwwv";
@@ -119,6 +121,23 @@ const reviews = [
     quote: "The review was straightforward, professional and explained in plain English.",
     name: "Small Business Client",
     label: "Website Security Review",
+  },
+  {
+    quote:
+      "Pryzon made the website review simple and easy to understand. They gave us clear advice on protecting our site and the information people send through it.",
+    name: "ARTS Education",
+    label: "Education Website Review",
+    logo: artsEducationLogo,
+    url: "https://www.artseducation.co.uk/page-page_sXbb52ZPdRScMfaa5oiBt",
+  },
+  {
+    quote:
+      "After having an issue with our Instagram, Pryzon gave us straightforward support and helped get things sorted. They also checked over our website and explained what we could do to keep our online setup safer going forward.",
+    name: "Swift’s Valets",
+    label: "Website & Instagram Security Support",
+    logo: swiftsValetsLogo,
+    logoWide: true,
+    url: "https://www.swiftsvalets.com/contact",
   },
   {
     quote: "Helpful, clear and focused on fixes that actually mattered.",
@@ -464,7 +483,11 @@ function ReviewCard({ review, index }) {
             <img
               src={review.logo}
               alt={`${review.name} logo`}
-              className="h-14 w-14 shrink-0 rounded bg-white object-contain"
+              className={
+                review.logoWide
+                  ? "h-14 max-w-[170px] shrink-0 rounded bg-black/20 object-contain"
+                  : "h-14 w-14 shrink-0 rounded bg-white object-contain"
+              }
             />
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-violet-200">
               {review.name}
